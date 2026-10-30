@@ -1,13 +1,11 @@
-import { useMemo, useState } from "react";
 import { CATEGORIES, CATEGORY_BY_ID } from "../../constants/categories";
-import type { CategoryId, Transaction } from "../../types";
+import type { CategoryId, SortBy, Transaction } from "../../types";
 import { formatDate, formatSum } from "../../utils/format";
 import { Dropdown } from "../Dropdown/Dropdown";
 import { TrashIcon } from "../icons";
 import styles from "./ExpensesTable.module.css";
 
-type Filter = CategoryId | "all";
-type Sort = "date" | "sum";
+export type Filter = CategoryId | "all";
 
 const FILTER_OPTIONS = [
   { value: "all" as const, label: "все" },
@@ -21,6 +19,10 @@ const SORT_OPTIONS = [
 
 interface Props {
   transactions: Transaction[];
+  filter: Filter;
+  sort: SortBy;
+  onFilterChange: (filter: Filter) => void;
+  onSortChange: (sort: SortBy) => void;
   isMobile: boolean;
   selectedId?: string | null;
   onSelect?: (id: string | null) => void;
@@ -31,6 +33,10 @@ interface Props {
 
 export function ExpensesTable({
   transactions,
+  filter,
+  sort,
+  onFilterChange,
+  onSortChange,
   isMobile,
   selectedId,
   onSelect,
@@ -38,21 +44,6 @@ export function ExpensesTable({
   title,
   message,
 }: Props) {
-  const [filter, setFilter] = useState<Filter>("all");
-  const [sort, setSort] = useState<Sort>("date");
-
-  const rows = useMemo(() => {
-    const filtered =
-      filter === "all"
-        ? transactions
-        : transactions.filter((item) => item.category === filter);
-    return [...filtered].sort((a, b) =>
-      sort === "date"
-        ? b.date.localeCompare(a.date)
-        : b.sum - a.sum || b.date.localeCompare(a.date),
-    );
-  }, [transactions, filter, sort]);
-
   const endClass = isMobile ? styles.alignEnd : undefined;
 
   return (
@@ -64,13 +55,13 @@ export function ExpensesTable({
             label="Фильтровать по категории"
             value={filter}
             options={FILTER_OPTIONS}
-            onChange={setFilter}
+            onChange={onFilterChange}
           />
           <Dropdown
             label="Сортировать по"
             value={sort}
             options={SORT_OPTIONS}
-            onChange={setSort}
+            onChange={onSortChange}
           />
         </div>
       </div>
@@ -90,15 +81,15 @@ export function ExpensesTable({
 
         <div className={styles.body}>
           {message && <p className={styles.empty}>{message}</p>}
-          {!message && rows.length === 0 && (
+          {!message && transactions.length === 0 && (
             <p className={styles.empty}>
-              {transactions.length === 0
+              {filter === "all"
                 ? "Расходов пока нет. Добавьте первый расход."
                 : "Нет расходов в этой категории."}
             </p>
           )}
           {!message &&
-            rows.map((item) => {
+            transactions.map((item) => {
               const isSelected = item.id === selectedId;
               return (
                 <div

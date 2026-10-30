@@ -1,8 +1,14 @@
 import { createContext } from "react";
-import type { NewTransaction, Transaction } from "../../types";
+import type {
+  NewTransaction,
+  Transaction,
+  TransactionsQuery,
+} from "../../types";
 
 export interface TransactionsContextValue {
   transactions: Transaction[];
+  version: number;
+  fetchTransactions: (query: TransactionsQuery) => Promise<Transaction[]>;
   isLoading: boolean;
   error: string | null;
   addTransaction: (data: NewTransaction) => Promise<void>;
