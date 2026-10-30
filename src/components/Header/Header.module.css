@@ -1,0 +1,154 @@
+.header {
+  background: var(--color-white);
+}
+
+.inner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: calc(var(--container) + 32px);
+  height: 64px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.nav {
+  position: absolute;
+  left: 50%;
+  display: flex;
+  gap: 48px;
+  transform: translateX(-50%);
+}
+
+.link {
+  font-size: 14px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.link:hover {
+  color: var(--color-accent);
+}
+
+.active {
+  color: var(--color-accent);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 5px;
+}
+
+.logout {
+  padding: 0;
+  border: none;
+  background: none;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.logout:hover {
+  color: var(--color-accent);
+}
+
+.right {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.menu {
+  position: relative;
+}
+
+.menuButton {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0;
+  border: none;
+  background: none;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.menuButton .active {
+  font-weight: 600;
+}
+
+.dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: -32px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  width: 170px;
+  padding: 10px;
+  border: 0.5px solid var(--color-grey);
+  border-radius: 6px;
+  background: var(--color-white);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+}
+
+.dropdownLink {
+  padding: 7px 14px;
+  border-radius: 24px;
+  background: var(--color-bg);
+  font-size: 12px;
+  text-decoration: none;
+}
+
+.dropdownLink.selected {
+  background: var(--color-accent-light);
+  color: var(--color-accent);
+}
+
+@media (max-width: 767px) {
+  .header {
+    background: var(--color-bg);
+  }
+
+  .inner {
+    gap: 12px;
+  }
+
+  .logo {
+    gap: 8px;
+    font-size: 14px;
+  }
+
+  .right {
+    gap: 14px;
+  }
+
+  .menuButton {
+    gap: 8px;
+    font-size: 13px;
+  }
+
+  .logout {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 375px) {
+  .logo {
+    width: 105px;
+  }
+  
+  .menuButton {
+    gap: 4px;
+    font-size: 11px;
+  }
+}

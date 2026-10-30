@@ -1,0 +1,74 @@
+.form {
+  display: flex;
+  flex-direction: column;
+}
+
+.title {
+  margin-bottom: 24px;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.label {
+  display: block;
+  margin-bottom: 16px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.star {
+  margin-left: 4px;
+  color: var(--color-error);
+}
+
+.field + .field {
+  margin-top: 24px;
+}
+
+.categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  height: 31px;
+  padding: 0 20px;
+  border: none;
+  border-radius: 30px;
+  background: var(--color-bg);
+  font-size: 12px;
+}
+
+.chip:hover {
+  color: var(--color-accent);
+}
+
+.chipSelected {
+  background: var(--color-accent-light);
+  color: var(--color-accent);
+}
+
+.submitError {
+  margin-top: 16px;
+  color: var(--color-error);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.submit {
+  margin-top: 24px;
+}
+
+@media (max-width: 767px) {
+  .label {
+    font-size: 16px;
+  }
+
+  .chip {
+    height: 31px;
+  }
+}

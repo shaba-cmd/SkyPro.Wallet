@@ -1,0 +1,35 @@
+.grid {
+  display: grid;
+  grid-template-columns: 379px minmax(0, 789px);
+  justify-content: space-between;
+  align-items: start;
+  gap: 32px;
+}
+
+.periodCard {
+  display: flex;
+  flex-direction: column;
+  height: 540px;
+  padding-top: 32px;
+  overflow: hidden;
+}
+
+.periodTitle {
+  margin: 0 32px 24px;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.calendar {
+  flex: 1;
+}
+
+.chartCard {
+  padding: 32px;
+}
+
+@media (max-width: 1100px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,90 @@
+.calendar {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.weekdays,
+.days {
+  display: grid;
+  grid-template-columns: repeat(7, 40px);
+  justify-content: space-between;
+  row-gap: 6px;
+}
+
+.weekdaysRow {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: 0 32px 6px;
+  border-bottom: 0.5px solid var(--color-grey);
+  background: var(--color-white);
+}
+
+.weekdays span {
+  color: var(--color-grey);
+  font-size: 12px;
+  text-align: center;
+}
+
+.months {
+  flex: 1;
+  min-height: 0;
+  padding: 24px 32px;
+  overflow-y: auto;
+}
+
+.month + .month {
+  margin-top: 24px;
+}
+
+.monthTitle {
+  margin-bottom: 14px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.day {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--color-bg);
+  font-size: 12px;
+}
+
+.day:hover {
+  color: var(--color-accent);
+}
+
+.selected {
+  background: var(--color-accent-light);
+  color: var(--color-accent);
+}
+
+@media (max-width: 767px) {
+  .weekdays,
+  .days {
+    grid-template-columns: repeat(7, minmax(0, 42px));
+  }
+
+  .weekdaysRow {
+    margin: 0 -16px;
+    padding: 0 16px 6px;
+  }
+
+  .months {
+    flex: none;
+    height: calc(100dvh - 290px);
+    min-height: 240px;
+    padding: 24px 0;
+  }
+
+  .day {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+    font-size: 12px;
+  }
+}
