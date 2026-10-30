@@ -2,20 +2,36 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "../../components/Button/Button";
 import { ExpenseForm } from "../../components/ExpenseForm/ExpenseForm";
-import { ExpensesTable } from "../../components/ExpensesTable/ExpensesTable";
+import {
+  ExpensesTable,
+  type Filter,
+} from "../../components/ExpensesTable/ExpensesTable";
 import { PlusCircleIcon } from "../../components/icons";
 import { BottomBar, PageTitle } from "../../components/Layout/Layout";
 import layoutStyles from "../../components/Layout/Layout.module.css";
+import { useTableTransactions } from "../../context/transactions/useTableTransactions";
 import { useTransactions } from "../../context/transactions/useTransactions";
 import { useIsMobile } from "../../hooks/useMediaQuery";
+import type { SortBy } from "../../types";
 import styles from "./ExpensesPage.module.css";
 
 export function ExpensesPage() {
   const isMobile = useIsMobile();
-  const { transactions, isLoading, error, deleteTransaction } =
-    useTransactions();
+  const { deleteTransaction } = useTransactions();
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const message = isLoading ? "Загрузка..." : error;
+  const [filter, setFilter] = useState<Filter>("all");
+  const [sort, setSort] = useState<SortBy>("date");
+  const { rows, isFirstLoad, error } = useTableTransactions(sort, filter);
+  const message = isFirstLoad ? "Загрузка..." : error;
+
+  const tableProps = {
+    transactions: rows,
+    filter,
+    sort,
+    onFilterChange: setFilter,
+    onSortChange: setSort,
+    message,
+  };
 
   const handleDelete = async (id: string) => {
     try {
@@ -37,8 +53,7 @@ export function ExpensesPage() {
           </Link>
         </div>
         <ExpensesTable
-          transactions={transactions}
-          message={message}
+          {...tableProps}
           isMobile
           selectedId={selectedId}
           onSelect={setSelectedId}
@@ -61,8 +76,7 @@ export function ExpensesPage() {
       <div className={styles.grid}>
         <ExpensesTable
           title="Таблица расходов"
-          transactions={transactions}
-          message={message}
+          {...tableProps}
           isMobile={false}
           onDelete={handleDelete}
         />
