@@ -1,0 +1,63 @@
+.wrapper {
+  position: relative;
+}
+
+.input {
+  display: block;
+  width: 100%;
+  height: 39px;
+  padding: 0 12px;
+  border: 0.5px solid var(--color-grey);
+  border-radius: var(--radius-control);
+  background: var(--color-white);
+  font-size: 12px;
+  outline: none;
+}
+
+.input::placeholder {
+  color: var(--color-grey);
+}
+
+.input:focus {
+  border-color: var(--color-grey);
+}
+
+/* Заполненное поле, с которого ушел фокус */
+.input:not(:focus):not(:placeholder-shown) {
+  border-color: var(--color-accent);
+  background: var(--color-accent-light);
+}
+
+.input.error,
+.input.error:not(:focus):not(:placeholder-shown) {
+  border-color: var(--color-error);
+  background: var(--color-error-bg);
+}
+
+.input.error::placeholder {
+  color: transparent;
+}
+
+.mirror {
+  position: absolute;
+  inset: 0 12px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  font-size: 12px;
+  white-space: pre;
+  pointer-events: none;
+}
+
+.mirrorText {
+  color: transparent;
+}
+
+.mirrorPlaceholder {
+  color: var(--color-text);
+}
+
+.star {
+  margin-left: 2px;
+  color: var(--color-error);
+}
