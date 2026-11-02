@@ -16,6 +16,8 @@ export interface Transaction {
 
 export type SortBy = "date" | "sum";
 
+export type CategoryFilter = CategoryId | "all";
+
 export interface TransactionsQuery {
   sortBy?: SortBy;
   filterBy?: CategoryId[];

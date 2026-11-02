@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import type {
+  CategoryFilter,
   NewTransaction,
+  SortBy,
   Transaction,
-  TransactionsQuery,
 } from "../../types";
 import { ApiError } from "../../api/client";
 import * as api from "../../api/transactions";
@@ -14,23 +15,33 @@ interface Props {
   children: ReactNode;
 }
 
+interface TableState {
+  rows: Transaction[];
+  error: string | null;
+}
+
+function insertInOrder(
+  rows: Transaction[],
+  item: Transaction,
+  sortBy: SortBy,
+): Transaction[] {
+  const index = rows.findIndex((row) =>
+    sortBy === "sum" ? row.sum < item.sum : row.date < item.date,
+  );
+  return index === -1
+    ? [...rows, item]
+    : [...rows.slice(0, index), item, ...rows.slice(index)];
+}
+
 export function TransactionsProvider({ token, children }: Props) {
   const { logout } = useAuth();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const [version, setVersion] = useState(0);
-
-  const updateTransactions = (data: Transaction[]) => {
-    setTransactions(data);
-    setVersion((prev) => prev + 1);
-  };
-
-  const fetchTransactions = useCallback(
-    (query: TransactionsQuery) => api.getTransactions(token, query),
-    [token],
-  );
+  const [filter, setFilter] = useState<CategoryFilter>("all");
+  const [sortBy, setSortBy] = useState<SortBy>("date");
+  const [table, setTable] = useState<TableState | null>(null);
 
   const handleError = (err: unknown) => {
     if (err instanceof ApiError && err.status === 401) {
@@ -64,21 +75,66 @@ export function TransactionsProvider({ token, children }: Props) {
     };
   }, [token, logout]);
 
+  useEffect(() => {
+    let cancelled = false;
+    api
+      .getTransactions(token, {
+        sortBy,
+        filterBy: filter === "all" ? undefined : [filter],
+      })
+      .then((rows) => {
+        if (!cancelled) setTable({ rows, error: null });
+      })
+      .catch((err: unknown) => {
+        if (cancelled) return;
+        if (err instanceof ApiError && err.status === 401) {
+          logout();
+          return;
+        }
+        setTable({
+          rows: [],
+          error:
+            err instanceof Error ? err.message : "Не удалось загрузить расходы",
+        });
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [token, logout, sortBy, filter]);
+
+  const updateTableRows = (update: (rows: Transaction[]) => Transaction[]) =>
+    setTable((prev) => prev && { ...prev, rows: update(prev.rows) });
+
   const value = {
     transactions,
-    version,
-    fetchTransactions,
+    tableTransactions: table?.rows ?? [],
+    filter,
+    sortBy,
+    setFilter,
+    setSortBy,
     isLoading,
-    error,
+    isTableLoading: table === null,
+    error: table?.error ?? error,
     addTransaction: async (data: NewTransaction) => {
-      updateTransactions(
-        await api.addTransaction(token, data).catch(handleError),
+      const updated = await api.addTransaction(token, data).catch(handleError);
+      const knownIds = new Set(transactions.map((item) => item.id));
+      const added = updated.find(
+        (item) =>
+          !knownIds.has(item.id) &&
+          item.description === data.description &&
+          item.category === data.category &&
+          item.sum === data.sum,
       );
+      setTransactions(updated);
+      if (added && (filter === "all" || added.category === filter)) {
+        updateTableRows((rows) => insertInOrder(rows, added, sortBy));
+      }
     },
     deleteTransaction: async (id: string) => {
-      updateTransactions(
+      setTransactions(
         await api.deleteTransaction(token, id).catch(handleError),
       );
+      updateTableRows((rows) => rows.filter((row) => row.id !== id));
     },
   };
 

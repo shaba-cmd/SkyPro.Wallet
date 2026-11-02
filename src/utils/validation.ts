@@ -6,20 +6,8 @@ export const isValidName = (value: string) =>
 
 export const isValidPassword = (value: string) => value.length >= 6;
 
-export function parseDate(value: string): string | null {
-  const match = /^(\d{2})\.(\d{2})\.(\d{4})$/.exec(value.trim());
-  if (!match) return null;
-  const [, day, month, year] = match;
-  const date = new Date(Number(year), Number(month) - 1, Number(day));
-  if (
-    date.getFullYear() !== Number(year) ||
-    date.getMonth() !== Number(month) - 1 ||
-    date.getDate() !== Number(day)
-  ) {
-    return null;
-  }
-  return `${year}-${month}-${day}`;
-}
+export const isValidIsoDate = (value: string) =>
+  /^\d{4}-\d{2}-\d{2}$/.test(value) && !Number.isNaN(Date.parse(value));
 
 export function parseSum(value: string): number | null {
   const normalized = value.replace(/[\s\u00a0₽]/g, "");

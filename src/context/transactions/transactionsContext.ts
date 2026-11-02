@@ -1,15 +1,20 @@
 import { createContext } from "react";
 import type {
+  CategoryFilter,
   NewTransaction,
+  SortBy,
   Transaction,
-  TransactionsQuery,
 } from "../../types";
 
 export interface TransactionsContextValue {
   transactions: Transaction[];
-  version: number;
-  fetchTransactions: (query: TransactionsQuery) => Promise<Transaction[]>;
+  tableTransactions: Transaction[];
+  filter: CategoryFilter;
+  sortBy: SortBy;
+  setFilter: (filter: CategoryFilter) => void;
+  setSortBy: (sortBy: SortBy) => void;
   isLoading: boolean;
+  isTableLoading: boolean;
   error: string | null;
   addTransaction: (data: NewTransaction) => Promise<void>;
   deleteTransaction: (id: string) => Promise<void>;
