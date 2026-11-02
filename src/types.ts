@@ -14,6 +14,13 @@ export interface Transaction {
   sum: number;
 }
 
+export type SortBy = "date" | "sum";
+
+export interface TransactionsQuery {
+  sortBy?: SortBy;
+  filterBy?: CategoryId[];
+}
+
 export type NewTransaction = Omit<Transaction, "id">;
 
 export interface User {

@@ -1,4 +1,9 @@
-import type { CategoryId, NewTransaction, Transaction } from "../types";
+import type {
+  CategoryId,
+  NewTransaction,
+  Transaction,
+  TransactionsQuery,
+} from "../types";
 import { toIsoDate } from "../utils/format";
 import { request } from "./client";
 
@@ -30,8 +35,18 @@ const fromApi = ({ _id, date, ...rest }: ApiTransaction): Transaction => ({
   date: fromApiDate(date),
 });
 
-export async function getTransactions(token: string): Promise<Transaction[]> {
-  const data = await request<ApiTransaction[]>("/transactions", { token });
+export async function getTransactions(
+  token: string,
+  { sortBy, filterBy }: TransactionsQuery = {},
+): Promise<Transaction[]> {
+  const params = new URLSearchParams();
+  if (sortBy) params.set("sortBy", sortBy);
+  if (filterBy?.length) params.set("filterBy", filterBy.join(","));
+  const query = params.size > 0 ? `?${params}` : "";
+
+  const data = await request<ApiTransaction[]>(`/transactions${query}`, {
+    token,
+  });
   return data.map(fromApi);
 }
 
