@@ -5,7 +5,7 @@ import type { CategoryId } from "../../types";
 import { formatSum } from "../../utils/format";
 import {
   isValidDescription,
-  parseDate,
+  isValidIsoDate,
   parseSum,
 } from "../../utils/validation";
 import { Button } from "../Button/Button";
@@ -22,13 +22,6 @@ interface Props {
 }
 
 const FORM_ID = "new-expense-form";
-
-function maskDate(value: string) {
-  const digits = value.replace(/\D/g, "").slice(0, 8);
-  return [digits.slice(0, 2), digits.slice(2, 4), digits.slice(4)]
-    .filter(Boolean)
-    .join(".");
-}
 
 export function ExpenseForm({ isMobile, onAdded }: Props) {
   const { addTransaction } = useTransactions();
@@ -55,12 +48,11 @@ export function ExpenseForm({ isMobile, onAdded }: Props) {
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
-    const parsedDate = parseDate(date);
     const parsedSum = parseSum(sum);
     const nextErrors = {
       description: !isValidDescription(description),
       category: category === null,
-      date: parsedDate === null,
+      date: !isValidIsoDate(date),
       sum: parsedSum === null,
     };
     if (Object.values(nextErrors).some(Boolean)) {
@@ -72,7 +64,7 @@ export function ExpenseForm({ isMobile, onAdded }: Props) {
       await addTransaction({
         description: description.trim(),
         category: category!,
-        date: parsedDate!,
+        date,
         sum: parsedSum!,
       });
     } catch (err) {
@@ -160,12 +152,11 @@ export function ExpenseForm({ isMobile, onAdded }: Props) {
       <label className={styles.field}>
         {label("Дата", "date")}
         <Input
-          placeholder="Введите дату"
-          inputMode="numeric"
+          type="date"
           value={date}
           error={errors.date}
           onChange={(event) => {
-            setDate(maskDate(event.target.value));
+            setDate(event.target.value);
             clearError("date");
           }}
         />

@@ -2,34 +2,35 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "../../components/Button/Button";
 import { ExpenseForm } from "../../components/ExpenseForm/ExpenseForm";
-import {
-  ExpensesTable,
-  type Filter,
-} from "../../components/ExpensesTable/ExpensesTable";
+import { ExpensesTable } from "../../components/ExpensesTable/ExpensesTable";
 import { PlusCircleIcon } from "../../components/icons";
 import { BottomBar, PageTitle } from "../../components/Layout/Layout";
 import layoutStyles from "../../components/Layout/Layout.module.css";
-import { useTableTransactions } from "../../context/transactions/useTableTransactions";
 import { useTransactions } from "../../context/transactions/useTransactions";
 import { useIsMobile } from "../../hooks/useMediaQuery";
-import type { SortBy } from "../../types";
 import styles from "./ExpensesPage.module.css";
 
 export function ExpensesPage() {
   const isMobile = useIsMobile();
-  const { deleteTransaction } = useTransactions();
+  const {
+    tableTransactions,
+    filter,
+    sortBy,
+    setFilter,
+    setSortBy,
+    isTableLoading,
+    error,
+    deleteTransaction,
+  } = useTransactions();
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [filter, setFilter] = useState<Filter>("all");
-  const [sort, setSort] = useState<SortBy>("date");
-  const { rows, isFirstLoad, error } = useTableTransactions(sort, filter);
-  const message = isFirstLoad ? "Загрузка..." : error;
+  const message = isTableLoading ? "Загрузка..." : error;
 
   const tableProps = {
-    transactions: rows,
+    transactions: tableTransactions,
     filter,
-    sort,
+    sort: sortBy,
     onFilterChange: setFilter,
-    onSortChange: setSort,
+    onSortChange: setSortBy,
     message,
   };
 

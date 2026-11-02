@@ -1,11 +1,9 @@
 import { CATEGORIES, CATEGORY_BY_ID } from "../../constants/categories";
-import type { CategoryId, SortBy, Transaction } from "../../types";
+import type { CategoryFilter, SortBy, Transaction } from "../../types";
 import { formatDate, formatSum } from "../../utils/format";
 import { Dropdown } from "../Dropdown/Dropdown";
 import { TrashIcon } from "../icons";
 import styles from "./ExpensesTable.module.css";
-
-export type Filter = CategoryId | "all";
 
 const FILTER_OPTIONS = [
   { value: "all" as const, label: "все" },
@@ -19,9 +17,9 @@ const SORT_OPTIONS = [
 
 interface Props {
   transactions: Transaction[];
-  filter: Filter;
+  filter: CategoryFilter;
+  onFilterChange: (filter: CategoryFilter) => void;
   sort: SortBy;
-  onFilterChange: (filter: Filter) => void;
   onSortChange: (sort: SortBy) => void;
   isMobile: boolean;
   selectedId?: string | null;

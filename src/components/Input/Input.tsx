@@ -21,7 +21,7 @@ export function Input({
   return (
     <div className={[styles.wrapper, className].filter(Boolean).join(" ")}>
       <input
-        className={[styles.input, error && styles.error]
+        className={[styles.input, value && styles.filled, error && styles.error]
           .filter(Boolean)
           .join(" ")}
         value={value}
